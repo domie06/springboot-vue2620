@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JijinCollectionDao">
+
+
+
+
+
+
+
+
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.jijin_id as jijinId
+        ,a.yonghu_id as yonghuId
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JijinCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,jijin.jijin_uuid_number as jijinUuidNumber
+        ,jijin.jijin_name as jijinName
+        ,jijin.jijin_photo as jijinPhoto
+        ,jijin.jijin_types as jijinTypes
+        ,jijin.jijin_clicknum as jijinClicknum
+        ,jijin.jijin_tuijian_types as jijinTuijianTypes
+        ,jijin.jijin_content as jijinContent
+        ,jijin.shangxia_types as shangxiaTypes
+        ,jijin.jijin_delete as jijinDelete
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.new_money as newMoney
+
+        FROM jijin_collection  a
+        left JOIN jijin jijin ON a.jijin_id = jijin.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.jijinId != null and params.jijinId != ''">
+                and a.jijin_id = #{params.jijinId}
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+            <if test=" params.jijinUuidNumber != '' and params.jijinUuidNumber != null and params.jijinUuidNumber != 'null' ">
+                and jijin.jijin_uuid_number like CONCAT('%',#{params.jijinUuidNumber},'%')
+            </if>
+            <if test=" params.jijinName != '' and params.jijinName != null and params.jijinName != 'null' ">
+                and jijin.jijin_name like CONCAT('%',#{params.jijinName},'%')
+            </if>
+            <if test="params.jijinTypes != null  and params.jijinTypes != ''">
+                and jijin.jijin_types = #{params.jijinTypes}
+            </if>
+
+            <if test="params.jijinClicknumStart != null  and params.jijinClicknumStart != '' ">
+                <![CDATA[  and jijin.jijin_clicknum >= #{params.jijinClicknumStart}   ]]>
+            </if>
+            <if test="params.jijinClicknumEnd != null  and params.jijinClicknumEnd != '' ">
+                <![CDATA[  and jijin.jijin_clicknum <= #{params.jijinClicknumEnd}   ]]>
+            </if>
+            <if test="params.jijinClicknum != null  and params.jijinClicknum != '' ">
+                and jijin.jijin_clicknum = #{params.jijinClicknum}
+            </if>
+            <if test="params.jijinTuijianTypes != null  and params.jijinTuijianTypes != ''">
+                and jijin.jijin_tuijian_types = #{params.jijinTuijianTypes}
+            </if>
+
+            <if test=" params.jijinContent != '' and params.jijinContent != null and params.jijinContent != 'null' ">
+                and jijin.jijin_content like CONCAT('%',#{params.jijinContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null  and params.shangxiaTypes != ''">
+                and jijin.shangxia_types = #{params.shangxiaTypes}
+            </if>
+
+            <if test="params.jijinDeleteStart != null  and params.jijinDeleteStart != '' ">
+                <![CDATA[  and jijin.jijin_delete >= #{params.jijinDeleteStart}   ]]>
+            </if>
+            <if test="params.jijinDeleteEnd != null  and params.jijinDeleteEnd != '' ">
+                <![CDATA[  and jijin.jijin_delete <= #{params.jijinDeleteEnd}   ]]>
+            </if>
+            <if test="params.jijinDelete != null  and params.jijinDelete != '' ">
+                and jijin.jijin_delete = #{params.jijinDelete}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(jijin.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(jijin.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+            <if test="params.newMoneyStart != null ">
+                <![CDATA[  and yonghu.new_money >= #{params.newMoneyStart}   ]]>
+            </if>
+            <if test="params.newMoneyEnd != null ">
+                <![CDATA[  and yonghu.new_money <= #{params.newMoneyEnd}   ]]>
+            </if>
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
